@@ -1,7 +1,7 @@
 var webpack = require("webpack");
 module.exports = {
     entry: [
-        './src/components/GalleryByReactApp.js'
+        './src/components/root.js'
     ],
     output: {
         path: './disk',

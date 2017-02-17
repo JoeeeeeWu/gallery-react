@@ -1,7 +1,8 @@
-require('../styles/main.css');
-
-var React=require("react");
-var ReactDom=require("react-dom");
+import React, { Component } from 'react';
+import ReactDom  from 'react-dom';
+import ControlerUnit from './ControlerUnit';
+import ImgFigure from './ImgFigure';
+import '../styles/main.css';
 
 //获取图片相关数据(数组)
 var imageDatas = require('../data/imageDatas.json');
@@ -25,112 +26,31 @@ function get30DegRandom(){
     return (Math.random()>0.5 ? "" : "-")+Math.ceil(Math.random()*30);
 }
 
-//单个图片组件
-var ImgFigure=React.createClass({
-    
-    handleClick: function(e){
-        if(this.props.arrange.isCenter){
-            this.props.inverse();
-        }else{
-            this.props.center();
-        }
-        e.preventDefault();
-        e.stopPropagation();
-    },
-    
-    render:function(){
-        
-        var styleObj={};
-        if(this.props.arrange.pos){
-            styleObj=this.props.arrange.pos;
-        }
-        
-        if(this.props.arrange.rotate){
-            ["MozTransform","msTransform","WebkitTransform","transform"].forEach(function(value){
-                styleObj[value]="rotate("+this.props.arrange.rotate+"deg)";
-            }.bind(this)) 
-        }
-        
-        if(this.props.arrange.isCenter){
-            styleObj.zIndex=11;
-        }
-        
-        var imgFigureClassName="img-figure";
-        imgFigureClassName += this.props.arrange.isInverse ? " is-inverse" : "";
-        
-        return (
-            <figure className={imgFigureClassName} style={styleObj} onClick={this.handleClick}>
-                <img src={this.props.data.imageUrl} alt={this.props.data.title}/>
-                <figcaption>    
-                    <h2 className="img-title">{this.props.data.title}</h2>
-                    <div className="img-back" onClick={this.handleClick}>
-                        <p>
-                            {this.props.data.des}
-                        </p>
-                    </div>
-                </figcaption>
-            </figure>
-        );
-    }
-});
-
-var ControlerUnit=React.createClass({
-    handleClick: function(e){
-        
-        if(this.props.arrange.isCenter){
-            this.props.inverse();
-        }else{
-            this.props.center();
-        }
-        e.preventDefault();
-        e.stopPropagation();
-    },
-    
-    render: function (){
-        var controlerUnitClassName="controler-unit";
-        
-        if(this.props.arrange.isCenter){
-            controlerUnitClassName+=" is-center";
-        }
-        
-        if(this.props.arrange.isInverse){
-            controlerUnitClassName+=" is-inverse";
-        }
-        
-        return (
-            <span className={controlerUnitClassName} onClick={this.handleClick}></span>
-        );
-    }
-});
-
-var GalleryByReactApp = React.createClass({
-    
-     getInitialState: function(){
-        return {
-            imgsArrangeArr: [
-              
-            ]
+class GalleryByReactApp extends Component {
+    constructor(props){
+        super(props);
+        this.Constant={
+            centerPos: {
+                left: 0,
+                right: 0
+            },
+            hPosRange: { //水平方向的取值范围
+                leftSecX: [0,0],
+                rightSecX: [0,0],
+                y: [0,0]
+            },
+            vPosRange: {
+                x: [0,0],
+                topY: [0,0]
+            }
         };
-    },
-    
-    Constant:{
-          centerPos: {
-              left: 0,
-              right: 0
-          },
-        hPosRange: { //水平方向的取值范围
-            leftSecX: [0,0],
-            rightSecX: [0,0],
-            y: [0,0]
-        },
-        vPosRange: {
-            x: [0,0],
-            topY: [0,0]
+        this.state={
+            imgsArrangeArr: []
         }
-    },
+    }
     
     //重新布局所有图片
-    rearrange: function(centerIndex){
+    rearrange(centerIndex){
         var imgsArrangeArr=this.state.imgsArrangeArr,
             Constant = this.Constant,
             centerPos = Constant.centerPos,
@@ -194,15 +114,15 @@ var GalleryByReactApp = React.createClass({
             imgsArrangeArr: imgsArrangeArr
         });
             
-    },
+    }
     
-    center: function(index){
+    center(index){
       return function(){
           this.rearrange(index);
       }.bind(this);  
-    },
+    }
     
-    inverse : function(index){
+    inverse(index){
         return function(){
             var imgsArrangeArr=this.state.imgsArrangeArr;
             imgsArrangeArr[index].isInverse=!imgsArrangeArr[index].isInverse;
@@ -211,10 +131,10 @@ var GalleryByReactApp = React.createClass({
             });
         }.bind(this);
         
-    },
+    }
     
     //组件加载后为每张图片计算位置范围
-    componentDidMount: function(){
+    componentDidMount(){
         //舞台大小
         var stageDOM=ReactDom.findDOMNode(this.refs.stage),
             stageW=stageDOM.scrollWidth,
@@ -246,10 +166,10 @@ var GalleryByReactApp = React.createClass({
         this.Constant.vPosRange.x[1]=halfStageW;
         
         this.rearrange(0);
-    },
+    }
     
     //渲染方法
-    render: function () { //垂直方向的取值范围
+    render(){ //垂直方向的取值范围
         var controlerUnits=[],
             imgFigures=[];
         imageDatas.forEach(function(value,index){
@@ -281,10 +201,9 @@ var GalleryByReactApp = React.createClass({
             </section>
         );
     }
-});
+}
 
-ReactDom.render(
-    <GalleryByReactApp/>,
-    document.getElementById("content")
-);
+export default GalleryByReactApp;
+
+
                 
