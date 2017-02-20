@@ -5,8 +5,12 @@ module.exports = {
     ],
     output: {
         path: './disk',
-        filename: 'bundle.js',
-        publicPath: 'disk/'
+        // filename: 'bundle.js',
+        //生产环境
+        filename: 'bundle.[hash:5].js',
+        // publicPath: 'disk/'
+        // 生产环境
+        publicPath: 'http://wuxiaozhou.coding.me/gallery-react/disk/'
     },
     module: {
         loaders: [
@@ -35,6 +39,18 @@ module.exports = {
             }
         ]
     },
+    plugins:[
+        new webpack.optimize.UglifyJsPlugin({
+			compress: {
+				warnings: false
+			}
+		}),//代码压缩，只在生产环境使用
+        new webpack.DefinePlugin({
+			"process.env": { 
+				NODE_ENV: JSON.stringify("production") 
+			}
+		})
+    ],
     resolve: {
         extensions: ['', '.js', '.jsx']
     }
